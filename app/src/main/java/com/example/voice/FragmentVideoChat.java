@@ -335,7 +335,7 @@ public class FragmentVideoChat extends Fragment {
 
 		final ImageView startCastView = new ImageView(getActivity());
 		mStartCastView = startCastView;
-		startCastView.setImageResource(R.drawable.streamself);
+//		startCastView.setImageResource(R.drawable.streamself);
 		startCastView.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(final View v) {
@@ -369,21 +369,6 @@ public class FragmentVideoChat extends Fragment {
 
 
 
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		int id = item.getItemId();
-		switch (id) {
-		case R.id.action_vchat_connect:
-			startVideoChat();
-			break;
-		case R.id.action_vchat_disconnect:
-			mConnector.disconnect();
-			mContainer.setCollapsed(true);
-			break;
-		}
-
-		return super.onOptionsItemSelected(item);
-	}
 
 	/** instantiate a new fragment */
 	public static FragmentVideoChat createInstance(Bundle extras) {

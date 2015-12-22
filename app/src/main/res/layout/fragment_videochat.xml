@@ -1,10 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.example.voice.VideoGridLayout
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/videochat_grid"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    tools:targetApi="11" >
+    android:layout_height="match_parent">
 
-</com.example.voice.VideoGridLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <com.example.voice.VideoGridLayout
+            android:id="@+id/videochat_grid"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:targetApi="11"></com.example.voice.VideoGridLayout>
+
+        <Button
+            android:id="@+id/start"
+            android:text="START"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+
+</FrameLayout>

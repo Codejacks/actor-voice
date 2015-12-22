@@ -2,11 +2,14 @@ package com.example.voice;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.webrtc.Logging;
 import org.webrtc.MediaConstraints;
 import org.webrtc.MediaStream;
 import org.webrtc.PeerConnection;
 import org.webrtc.SdpObserver;
 import org.webrtc.VideoRenderer;
+
+import java.util.EnumSet;
 
 public class StreamDescription implements StreamDescriptionInterface {
 	/** current state of the stream */

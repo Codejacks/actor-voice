@@ -34,6 +34,7 @@ import android.app.Activity;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.util.Base64;
+import android.util.Log;
 
 import com.koushikdutta.async.http.AsyncHttpClient;
 import com.koushikdutta.async.http.socketio.Acknowledge;
@@ -101,7 +102,7 @@ public class LicodeConnector implements VideoConnectorInterface {
 	/** may or may not provide logging output - as desired */
 	static void log(String s) {
 		// TODO dk: logging?!
-		System.out.println(s);
+		Log.d("LicodeConnector", s);
 	}
 
 	EventCallback mOnAddStream = new EventCallback() {
@@ -292,7 +293,7 @@ public class LicodeConnector implements VideoConnectorInterface {
 
 	@Override
 	public boolean isConnected() {
-		return mState == State.kConnected || mState == State.kConnecting;
+		return mState == State.kConnected /*|| mState == State.kConnecting*/;
 	}
 
 	@Override
@@ -319,9 +320,9 @@ public class LicodeConnector implements VideoConnectorInterface {
 				if (!sInitializedAndroidGlobals) {
 					sInitializedAndroidGlobals = true;
 					// newer libjingle versions have options for video and audio
-					PeerConnectionFactory.initializeAndroidGlobals(mActivity);// ,
-																				// true,
-																				// true);
+					PeerConnectionFactory.initializeAndroidGlobals(mActivity,
+							true,
+							true);
 				}
 
 				if (sFactory == null) {
@@ -506,9 +507,10 @@ public class LicodeConnector implements VideoConnectorInterface {
 			mRemoteStream.clear();
 			final JSONObject jsonToken = new JSONObject(token);
 			String host = jsonToken.getString("host");
-			if (!host.startsWith("http://")) {
-				host = "http://" + host;
+			if (!host.startsWith("https://")) {
+				host = "https://" + host;
 			}
+//			host+="/socket.io/1";
 			handleTokenRefresh(jsonToken);
 			SocketIOClient.connect(AsyncHttpClient.getDefaultInstance(), host,
 					new ConnectCallback() {
@@ -578,8 +580,9 @@ public class LicodeConnector implements VideoConnectorInterface {
 														mIceServers
 																.add(new PeerConnection.IceServer(
 																		url,
-																		usr,
-																		pwd));
+																		"foo",
+																		"foo"
+																));
 													}
 												}
 												if (jsonObject
@@ -1325,8 +1328,8 @@ public class LicodeConnector implements VideoConnectorInterface {
 			success = "success".equalsIgnoreCase(arg.getString(0));
 			if (success) {
 				JSONObject obj = arg.getJSONObject(1);
-				boolean subscribe = false;
-				boolean publish = false;
+				boolean subscribe = true;
+				boolean publish = true;
 				if (obj.has("permissions")) {
 					JSONObject permissions = obj.getJSONObject("permissions");
 					subscribe = permissions.has("subscribe")

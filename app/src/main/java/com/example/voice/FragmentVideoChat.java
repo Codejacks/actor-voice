@@ -1,11 +1,17 @@
 package com.example.voice;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.EnumSet;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -23,12 +29,15 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.voice.StreamDescriptionInterface.StreamState;
 
 import org.json.JSONObject;
+import org.webrtc.Logging;
 
 /**
  * simple fragment to display two rows of video streams
@@ -36,7 +45,7 @@ import org.json.JSONObject;
 public class FragmentVideoChat extends Fragment {
 	// TODO replace this with your servers url!
 	/** server url - where to request tokens */
-	private String mTokenServerUrl = "https://wrtc-sample.actor.im";
+	private String mTokenServerUrl = "https://wrtc-sample.actor.im:443";
 
 	/** the licode signaling engine */
 	VideoConnectorInterface mConnector = null;
@@ -75,8 +84,8 @@ public class FragmentVideoChat extends Fragment {
 	/**
 	 * create or retrieve a display element for given stream - will add this to
 	 * the appropriate list and the container element for video streams.
-	 * 
-	 * @param stream
+	 *
+	 * @param streamId
 	 *            The source of the video data.
 	 * @return An existing video display element, or a newly created one.
 	 */
@@ -101,6 +110,10 @@ public class FragmentVideoChat extends Fragment {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		Logging.enableTracing(
+				"logcat:",
+				EnumSet.of(Logging.TraceLevel.TRACE_ALL),
+				Logging.Severity.LS_SENSITIVE);
 	}
 
 	/** helper function - called to prepare the video chat connector instance */
@@ -202,6 +215,8 @@ public class FragmentVideoChat extends Fragment {
 						// TODO: Disconnect enable?
 						if (getActivity() != null) {
 							getActivity().invalidateOptionsMenu();
+							getActivity().invalidateOptionsMenu();
+							mConnector.requestPublish();
 						}
 					}
 				});
@@ -269,7 +284,7 @@ public class FragmentVideoChat extends Fragment {
 				}
 			});
 		}
-		startVideoChat(); // lets start Video Chat Immediately. Only for testing
+//		startVideoChat(); // lets start Video Chat Immediately. Only for testing
 	}
 
 	@Override
@@ -316,8 +331,17 @@ public class FragmentVideoChat extends Fragment {
 		configureConnector();
 		setHasOptionsMenu(true);
 
-		View mainView = inflater.inflate(R.layout.fragment_videochat,
-				container, false);
+		FrameLayout cont = (FrameLayout) inflater.inflate(R.layout.fragment_videochat, container, false);
+		Button b = (Button) cont.findViewById(R.id.start);
+		b.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				startVideoChat();
+
+				Toast.makeText(getActivity(), "Start", Toast.LENGTH_LONG).show();
+			}
+		});
+		View mainView = cont.findViewById(R.id.videochat_grid);
 
 		mContainer = (VideoGridLayout) mainView
 				.findViewById(R.id.videochat_grid);
@@ -345,13 +369,13 @@ public class FragmentVideoChat extends Fragment {
 							Toast.LENGTH_LONG).show();
 					return;
 				}
-				v.postDelayed(new Runnable() {
-					public void run() {
-						if (mConnector != null && mConnector.isConnected()) {
-							mConnector.requestPublish();
-						}
-					}
-				}, 100L); // TODO dk: hardcoded delay!
+//				v.postDelayed(new Runnable() {
+//					public void run() {
+//						if (mConnector != null && mConnector.isConnected()) {
+//							mConnector.requestPublish();
+//						}
+//					}
+//				}, 100L); // TODO dk: hardcoded delay!
 				Toast toast = Toast.makeText(getActivity(),
 						R.string.videochatWaitConnecting, Toast.LENGTH_SHORT);
 				toast.setGravity(Gravity.CENTER, 0, 0);
@@ -364,7 +388,7 @@ public class FragmentVideoChat extends Fragment {
 		startCastView.setLayoutParams(new VideoGridLayout.LayoutParams(
 				Integer.MAX_VALUE));
 
-		return mainView;
+		return cont;
 	}
 
 
@@ -413,11 +437,13 @@ public class FragmentVideoChat extends Fragment {
 			@Override
 			public void OnResult(String result) {
 //				mConnector.connect(result);
-				Log.e("result",""+result);
+//
+				Log.d("result", "" + result);
 				try{
 					JSONObject object = new JSONObject(result);
 					String token = object.getString("token");
 					String roomid = object.getString("roomId");
+					Log.d("RoomId", roomid);
 					mConnector.connect(token);
 				}catch (Exception e){
 					e.printStackTrace();
@@ -454,56 +480,57 @@ public class FragmentVideoChat extends Fragment {
 			HttpURLConnection conn = null;
 			InputStream is = null;
 			OutputStream os = null;
+
 			try {
-				URL url = new URL(params[0] + "/tokens/");
-				String message = "{";
-				message += "\"id\": \"75555555555\", ";
-				message += "\"authHash\": \"0465c1174ad115ebdfc47695579d5a18425d8220817f1169dd7f5402394c5370\" ";
-				message += " }";
+				URL url = new URL(params[0] + "/tokens");
+				String id = "75555555555";
+				String message;
+				JSONObject data = new JSONObject();
+				data.put("id", id);
+				data.put("authHash", "0465c1174ad115ebdfc47695579d5a18425d8220817f1169dd7f5402394c5370");
+
+				message = data.toString();
+				Log.d("JSON", message);
 				conn = (HttpURLConnection) url.openConnection();
+
 				conn.setRequestMethod("POST");
 				conn.setDoInput(true);
 				conn.setDoOutput(true);
 				conn.setFixedLengthStreamingMode(message.getBytes().length);
 
-				if (Build.VERSION.SDK_INT > 13) {
-					conn.setRequestProperty("Connection", "close");
-				}
+//				if (Build.VERSION.SDK_INT > 13) {
+//					conn.setRequestProperty("Connection", "close");
+//				}
 
 				conn.setRequestProperty("Content-Type",
-						"application/json;charset=utf-8");
-				conn.setRequestProperty("X-Request-With", "XMLHttpRequest");
+						"application/json");
+//				conn.setRequestProperty("X-Request-With", "XMLHttpRequest");
 
-				conn.connect();
+//				conn.connect();
 
-				os = conn.getOutputStream();
-				os.write(message.getBytes());
-				os.flush();
+				conn.setDoOutput(true);
+//					conn.setChunkedStreamingMode(0);
 
-				is = conn.getInputStream();
-				StringBuffer sb = new StringBuffer();
-				int ch = -1;
-				while ((ch = is.read()) != -1) {
-					sb.append((char) ch);
-				}
-				response = sb.toString();
+				OutputStream out = new BufferedOutputStream(conn.getOutputStream());
+				out.write(message.getBytes("UTF-8"));
+				out.flush();
+				out.close();
+				InputStream in = new BufferedInputStream(conn.getInputStream());
+				response = readStream(in);
+				in.close();
 
-				if (os != null) {
-					os.close();
-				}
-				if (is != null) {
-					is.close();
-				}
-			} catch (MalformedURLException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
+//					response = conn.getResponseMessage();
+			} catch (Exception e) {
 				e.printStackTrace();
 			} finally {
-				if (conn != null) {
-					conn.disconnect();
-				}
+				conn.disconnect();
 			}
 			return response;
+		}
+
+		private String readStream(InputStream is) {
+			java.util.Scanner s = new java.util.Scanner(is).useDelimiter("\\A");
+			return s.hasNext() ? s.next() : "";
 		}
 
 		@Override
@@ -513,6 +540,31 @@ public class FragmentVideoChat extends Fragment {
 				mResponse = null;
 			}
 		}
+	}
+
+	public static String sha256(String base) {
+		MessageDigest md = null;
+		try {
+			md = MessageDigest.getInstance("SHA-256");
+
+			md.update(base.getBytes("UTF-8"));
+
+			byte byteData[] = md.digest();
+
+			//convert the byte to hex format method 1
+			StringBuffer sb = new StringBuffer();
+			for (int i = 0; i < byteData.length; i++) {
+				sb.append(Integer.toString((byteData[i] & 0xff) + 0x100, 16).substring(1));
+			}
+
+			return sb.toString();
+
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+		return "";
 	}
 
 }

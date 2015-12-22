@@ -65,7 +65,7 @@ class FramePool {
         dst = frames.pop();
       } else {
         dst = new I420Frame(
-            source.width, source.height, source.yuvStrides, null);
+                source.width, source.height, source.yuvStrides, null);
       }
     }
     return dst;

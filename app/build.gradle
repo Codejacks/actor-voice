@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         applicationId "com.example.voice"
-        minSdkVersion 14
+        minSdkVersion 15
         targetSdkVersion 23
     }
 
@@ -21,5 +21,7 @@ android {
 dependencies {
     compile 'com.android.support:support-v4:23.1.0'
     compile files('libs/androidasync-1.2.6.jar')
-    compile files('libs/libjingle_peerconnection.jar')
+//    compile files('libs/libjingle_peerconnection.jar')
+    compile("io.pristine:libjingle_peerconnection:7113")
+//    compile 'io.pristine:libjingle:9694@aar'
 }

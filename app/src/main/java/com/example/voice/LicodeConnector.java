@@ -40,7 +40,9 @@ import com.koushikdutta.async.http.AsyncHttpClient;
 import com.koushikdutta.async.http.socketio.Acknowledge;
 import com.koushikdutta.async.http.socketio.ConnectCallback;
 import com.koushikdutta.async.http.socketio.EventCallback;
+import com.koushikdutta.async.http.socketio.JSONCallback;
 import com.koushikdutta.async.http.socketio.SocketIOClient;
+import com.koushikdutta.async.http.socketio.StringCallback;
 
 /**
  * A simple class to connect to a licode server and provides callbacks for the
@@ -510,7 +512,7 @@ public class LicodeConnector implements VideoConnectorInterface {
 			if (!host.startsWith("https://")) {
 				host = "https://" + host;
 			}
-//			host+="/socket.io/1";
+			host += "/socket.io/1";
 			handleTokenRefresh(jsonToken);
 			SocketIOClient.connect(AsyncHttpClient.getDefaultInstance(), host,
 					new ConnectCallback() {
@@ -545,6 +547,26 @@ public class LicodeConnector implements VideoConnectorInterface {
 								client.on("onDataStream", mOnDataStream);
 								client.on("onRemoveStream", mOnRemoveStream);
 								client.on("disconnect", mDisconnect);
+								client.on("signaling_message_erizo", new EventCallback() {
+									@Override
+									public void onEvent(JSONArray jsonArray, Acknowledge acknowledge) {
+										Log.d("signaling_message_erizo", jsonArray.toString());
+									}
+								});
+
+								client.setJSONCallback(new JSONCallback() {
+									@Override
+									public void onJSON(JSONObject jsonObject, Acknowledge acknowledge) {
+										Log.d("SocketIO", jsonObject.toString());
+
+									}
+								});
+								client.setStringCallback(new StringCallback() {
+									@Override
+									public void onString(String s, Acknowledge acknowledge) {
+										Log.d("SocketIO", s);
+									}
+								});
 							}
 
 							sendMessageSocket("token", jsonToken,
@@ -644,6 +666,7 @@ public class LicodeConnector implements VideoConnectorInterface {
 
 	/** send a json something on the specified channel via socket.io */
 	void sendMessageSocket(String channel, Object param, Acknowledge ack) {
+
 		synchronized (mSocketLock) {
 			if (mIoClient == null) {
 				return;
@@ -665,6 +688,14 @@ public class LicodeConnector implements VideoConnectorInterface {
 
 	void sendSDPSocket(String type, JSONObject param0, JSONObject param1,
 			Acknowledge ack) {
+		if (ack == null) {
+			ack = new Acknowledge() {
+				@Override
+				public void acknowledge(JSONArray jsonArray) {
+
+				}
+			};
+		}
 		synchronized (mSocketLock) {
 			if (mIoClient == null) {
 				return;
@@ -677,6 +708,14 @@ public class LicodeConnector implements VideoConnectorInterface {
 	}
 
 	void sendSDPSocket(String type, JSONArray params, Acknowledge ack) {
+		if (ack == null) {
+			ack = new Acknowledge() {
+				@Override
+				public void acknowledge(JSONArray jsonArray) {
+
+				}
+			};
+		}
 		synchronized (mSocketLock) {
 			if (mIoClient == null) {
 				return;
@@ -693,7 +732,12 @@ public class LicodeConnector implements VideoConnectorInterface {
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
-		sendMessageSocket("sendDataStream", param, null);
+		sendMessageSocket("sendDataStream", param, new Acknowledge() {
+			@Override
+			public void acknowledge(JSONArray jsonArray) {
+
+			}
+		});
 	}
 
 	void removeStream(StreamDescription stream) {
@@ -790,7 +834,7 @@ public class LicodeConnector implements VideoConnectorInterface {
 		/** id of the offerers session */
 		private int mOffererSessionId = 104;
 		/** id of the answerers session */
-		private int mAnswererSessionId = 0;
+		private long mAnswererSessionId = 0;
 		/** tracks if ice candidates are all collected */
 		boolean mIceReady = false;
 
@@ -905,7 +949,7 @@ public class LicodeConnector implements VideoConnectorInterface {
 				} catch (JSONException e) {
 				}
 			}
-			JSONObject p1 = new JSONObject();
+			final JSONObject p1 = new JSONObject();
 			try {
 				p1.put("messageType", "OFFER");
 				p1.put("sdp", mLocalSdp.description);
@@ -917,14 +961,20 @@ public class LicodeConnector implements VideoConnectorInterface {
 			} catch (JSONException e) {
 			}
 			log("SdpObserver#sendLocalDescription; to: " + mSignalChannel
-					+ "; msg: " + p1.toString());
-			sendSDPSocket(mSignalChannel, desc, p1, new Acknowledge() {
+					+ "; msg: " + desc.toString());
+			sendSDPSocket(mSignalChannel, desc, null, new Acknowledge() {
 				@Override
 				public void acknowledge(JSONArray arg0) {
 					log("SdpObserver#sendLocalDescription#sendSDPSocket#Acknowledge: "
 							+ arg0.toString());
-
 					String streamId = null;
+					long streamIdLong = 0;
+					try {
+						streamId = arg0.getLong(0) + "";
+						streamIdLong = arg0.getLong(0);
+					} catch (JSONException e) {
+						e.printStackTrace();
+					}
 					SessionDescription remoteSdp = null;
 					try {
 						// log(arg0.getString(0));
@@ -949,21 +999,47 @@ public class LicodeConnector implements VideoConnectorInterface {
 						mAnswererSessionId = jsonAnswer
 								.getInt("answererSessionId");
 					} catch (JSONException e1) {
+						e1.printStackTrace();
 					}
 
-					if (mIsPublish) {
+					if (streamId != null && mIsPublish) {
 						mStream.setId(streamId);
 						mLocalStream.put(streamId, mStream);
+						JSONObject data = new JSONObject();
+						JSONObject msg = new JSONObject();
+						try {
+							msg.put("type", "offer");
+							msg.put("sdp", mLocalSdp.description);
+							data.put("streamId", streamIdLong);
+							data.put("msg", msg);
+							Log.d("Subscribe", data.toString());
+							sendSDPSocket("signaling_message", data, null, new Acknowledge() {
+								@Override
+								public void acknowledge(JSONArray jsonArray) {
+									Log.d("Ansewer!", jsonArray.toString());
+								}
+							});
+						} catch (JSONException e) {
+							e.printStackTrace();
+						}
 					}
 
-					final SessionDescription finalRemoteSdp = remoteSdp;
-					mActivity.runOnUiThread(new Runnable() {
-						@Override
-						public void run() {
-							mStream.pc.setRemoteDescription(
-									LicodeSdpObserver.this, finalRemoteSdp);
-						}
-					});
+					if (remoteSdp != null) {
+
+						final SessionDescription finalRemoteSdp = remoteSdp;
+						mActivity.runOnUiThread(new Runnable() {
+							@Override
+							public void run() {
+								mStream.pc.setRemoteDescription(
+										LicodeSdpObserver.this, finalRemoteSdp);
+							}
+						});
+					} else {
+						Log.e("SdpObserver", "failed to setRemoteDescription - sendLocalDescription rremoteSdp not returned");
+//						disconnect();
+					}
+
+
 				}
 			});
 		}
@@ -979,7 +1055,12 @@ public class LicodeConnector implements VideoConnectorInterface {
 				// p0.put("sdp", " ");
 			} catch (JSONException e) {
 			}
-			sendSDPSocket(mSignalChannel, p0, p0, null);
+			sendSDPSocket(mSignalChannel, p0, p0, new Acknowledge() {
+				@Override
+				public void acknowledge(JSONArray jsonArray) {
+
+				}
+			});
 		}
 	}
 

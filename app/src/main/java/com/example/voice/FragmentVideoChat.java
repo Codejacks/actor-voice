@@ -488,7 +488,7 @@ public class FragmentVideoChat extends Fragment {
 				JSONObject data = new JSONObject();
 				data.put("id", id);
 				data.put("authHash", "0465c1174ad115ebdfc47695579d5a18425d8220817f1169dd7f5402394c5370");
-
+				data.put("roomId", "56687f12da186210281074fa");
 				message = data.toString();
 				Log.d("JSON", message);
 				conn = (HttpURLConnection) url.openConnection();

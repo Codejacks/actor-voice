@@ -179,14 +179,15 @@ public class StreamDescription implements StreamDescriptionInterface {
 			if (state != null) {
 				result.put("state", state);
 			}
-			result.put("data", mData);
-			result.put("audio", mAudio);
-			result.put("video", mVideo);
-			if (mAttributes == null) {
-				mAttributes = new JSONObject();
-			}
-			mAttributes.put("nick", mNick);
-			result.put("attributes", mAttributes);
+			result.put("data", true);
+			result.put("audio", true);
+			result.put("video", true);
+			result.put("minVideoBW", 0);
+//			if (mAttributes == null) {
+//				mAttributes = new JSONObject();
+//			}
+//			mAttributes.put("nick", mNick);
+//			result.put("attributes", mAttributes);
 		} catch (JSONException jex) {
 			// TODO
 			jex.printStackTrace();

@@ -336,9 +336,13 @@ public class FragmentVideoChat extends Fragment {
 		b.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				startVideoChat();
-
-				Toast.makeText(getActivity(), "Start", Toast.LENGTH_LONG).show();
+				if (mConnector.isConnected()) {
+					mConnector.detachLocalStream();
+					mConnector.disconnect();
+				} else {
+					startVideoChat();
+					Toast.makeText(getActivity(), "Start", Toast.LENGTH_LONG).show();
+				}
 			}
 		});
 		View mainView = cont.findViewById(R.id.videochat_grid);

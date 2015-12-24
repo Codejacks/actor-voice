@@ -105,6 +105,8 @@ public class LicodeConnector implements VideoConnectorInterface {
 	private MyPcObserver publishObserver;
 	private MyPcObserver subscribeObserver;
 	private boolean answer = false;
+	private ArrayList<String> publishAudioCandidates;
+	private ArrayList<String> publishVideoCandidates;
 
 	/** helper class - runnable that can be cancelled */
 	private static interface CancelableRunnable extends Runnable {
@@ -581,9 +583,38 @@ public class LicodeConnector implements VideoConnectorInterface {
 															publishObserver.getSdpObserver(), finalRemoteSdp);
 												}
 											});
+
+
+											JSONObject candidateMsg = new JSONObject();
+											candidateMsg.put("streamId", (((JSONObject) jsonArray.get(0)).getLong("streamId")));
+											JSONObject candidateMsgMsg = new JSONObject();
+											candidateMsg.put("msg", candidateMsgMsg);
+											candidateMsgMsg.put("type", "candidate");
+											JSONObject candidateData = new JSONObject();
+											candidateMsgMsg.put("candidate", candidateData);
+
+											//
+
+
+											for (String c : publishAudioCandidates) {
+												candidateData.put("sdpMLineIndex", 0);
+												candidateData.put("sdpMid", "audio");
+												candidateData.put("candidate", c);
+												Log.d("signaling_message:ac", candidateMsg.toString());
+												sendSDPSocket("signaling_message", candidateMsg, null, null);
+											}
+
+											for (String c : publishVideoCandidates) {
+												candidateData.put("sdpMLineIndex", 1);
+												candidateData.put("sdpMid", "video");
+												candidateData.put("candidate", c);
+												Log.d("signaling_message:vc", candidateMsg.toString());
+												sendSDPSocket("signaling_message", candidateMsg, null, null);
+											}
 										} catch (JSONException e) {
 											e.printStackTrace();
 										}
+
 
 									}
 								});
@@ -1046,7 +1077,22 @@ public class LicodeConnector implements VideoConnectorInterface {
 						Matcher cm = candidatePattern.matcher(mLocalSdp.description);
 						String sdp = cm.replaceAll("");
 
+//						Keep candidates so send them later
+						String[] audioVideo = new String(mLocalSdp.description).split("m=video");
 
+						publishAudioCandidates = new ArrayList<String>();
+						Matcher audiom = candidatePattern.matcher(audioVideo[0]);
+
+						while (audiom.find()) {
+							publishAudioCandidates.add(audiom.group().replace("\r", ""));
+						}
+
+						Matcher videom = candidatePattern.matcher(audioVideo[1]);
+						publishVideoCandidates = new ArrayList<String>();
+
+						while (videom.find()) {
+							publishVideoCandidates.add(videom.group().replace("\r", ""));
+						}
 
 						try {
 							msg.put("type", "offer");
@@ -1055,48 +1101,6 @@ public class LicodeConnector implements VideoConnectorInterface {
 							data.put("msg", msg);
 							Log.d("signaling_message:offer", data.toString());
 							sendSDPSocket("signaling_message", data, null, null);
-
-//							JSONObject candidateMsg = new JSONObject();
-//							candidateMsg.put("streamId", streamIdLong);
-//							JSONObject candidateMsgMsg = new JSONObject();
-//							candidateMsg.put("msg", candidateMsgMsg);
-//							candidateMsgMsg.put("type", "candidate");
-//							JSONObject candidateData = new JSONObject();
-//							candidateMsgMsg.put("candidate", candidateData);
-
-							//Keep candidates so send them later
-//							String[] audioVideo =new String(mLocalSdp.description).split("m=video");
-//
-//							ArrayList<String> audioCandidates = new ArrayList<String>();
-//							ArrayList<String> videoCandidates = new ArrayList<String>();
-//							Matcher audiom = candidatePattern.matcher(audioVideo[0]);
-//							Matcher videom = candidatePattern.matcher(audioVideo[1]);
-//
-//							for (int i = 0; i < audiom.groupCount(); i++) {
-//								audioCandidates.add(audiom.group(i));
-//							}
-//
-//							for (int i = 0; i < videom.groupCount(); i++) {
-//								videoCandidates.add(videom.group(i));
-//							}
-//
-//
-//							for (String c:audioCandidates) {
-//								candidateData.put("sdpMLineIndex", 0);
-//								candidateData.put("sdpMid", "audio");
-//								candidateData.put("candidate", c);
-//								Log.d("signaling_message:ac", candidateMsg.toString());
-//								sendSDPSocket("signaling_message", candidateMsg, null, null);
-//							}
-//
-//							for (String c:videoCandidates) {
-//								candidateData.put("sdpMLineIndex", 1);
-//								candidateData.put("sdpMid", "video");
-//								candidateData.put("candidate", c);
-//								Log.d("signaling_message:vc", candidateMsg.toString());
-//								sendSDPSocket("signaling_message", candidateMsg, null, null);
-//							}
-
 
 						} catch (JSONException e) {
 							e.printStackTrace();

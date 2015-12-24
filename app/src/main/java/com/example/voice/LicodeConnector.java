@@ -102,10 +102,8 @@ public class LicodeConnector implements VideoConnectorInterface {
 	private static Object sVcLock = new Object();
 	/** server confirmed rights */
 	private boolean mPermissionPublish, mPermissionSubscribe;
-	HashMap<String, MyPcObserver> observers = new HashMap<>();
-	private boolean answer = false;
-	private ArrayList<String> publishAudioCandidates;
-	private ArrayList<String> publishVideoCandidates;
+    HashMap<String, LicodeSdpObserver> observers = new HashMap<>();
+    private boolean answer = false;
 
 	/** helper class - runnable that can be cancelled */
 	private static interface CancelableRunnable extends Runnable {
@@ -578,48 +576,52 @@ public class LicodeConnector implements VideoConnectorInterface {
 											} else if (answer.has("peerId")) {
 												streamId = answer.getLong("peerId");
 											}
-											MyPcObserver observer = observers.get(streamId + "");
+                                            LicodeSdpObserver observer = observers.get(streamId + "");
+                                            if (observer == null) {
+                                                Log.w("signaling_message_erizo", "answer for unknown stream:" + streamId);
+                                            } else {
+                                                SessionDescription remoteSdp = new SessionDescription(Type.ANSWER,
+                                                        ((JSONObject) answer.get("mess")).getString("sdp"));
 
-											SessionDescription remoteSdp = new SessionDescription(Type.ANSWER,
-													((JSONObject) answer.get("mess")).getString("sdp"));
-
-											final SessionDescription finalRemoteSdp = remoteSdp;
-											final MyPcObserver finalObserver = observer;
-											mActivity.runOnUiThread(new Runnable() {
-												@Override
-												public void run() {
-													finalObserver.getSdpObserver().mStream.pc.setRemoteDescription(
-															finalObserver.getSdpObserver(), finalRemoteSdp);
-												}
-											});
-
-
-											JSONObject candidateMsg = new JSONObject();
-											candidateMsg.put("streamId", streamId);
-											JSONObject candidateMsgMsg = new JSONObject();
-											candidateMsg.put("msg", candidateMsgMsg);
-											candidateMsgMsg.put("type", "candidate");
-											JSONObject candidateData = new JSONObject();
-											candidateMsgMsg.put("candidate", candidateData);
-
-											//
+                                                final SessionDescription finalRemoteSdp = remoteSdp;
+                                                final LicodeSdpObserver finalObserver = observer;
+                                                mActivity.runOnUiThread(new Runnable() {
+                                                    @Override
+                                                    public void run() {
+                                                        finalObserver.mStream.pc.setRemoteDescription(
+                                                                finalObserver, finalRemoteSdp);
+                                                    }
+                                                });
 
 
-											for (String c : publishAudioCandidates) {
-												candidateData.put("sdpMLineIndex", 0);
-												candidateData.put("sdpMid", "audio");
-												candidateData.put("candidate", c);
-												Log.d("signaling_message:ac", candidateMsg.toString());
-												sendSDPSocket("signaling_message", candidateMsg, null, null);
-											}
+                                                JSONObject candidateMsg = new JSONObject();
+                                                candidateMsg.put("streamId", streamId);
+                                                JSONObject candidateMsgMsg = new JSONObject();
+                                                candidateMsg.put("msg", candidateMsgMsg);
+                                                candidateMsgMsg.put("type", "candidate");
+                                                JSONObject candidateData = new JSONObject();
+                                                candidateMsgMsg.put("candidate", candidateData);
 
-											for (String c : publishVideoCandidates) {
-												candidateData.put("sdpMLineIndex", 1);
-												candidateData.put("sdpMid", "video");
-												candidateData.put("candidate", c);
-												Log.d("signaling_message:vc", candidateMsg.toString());
-												sendSDPSocket("signaling_message", candidateMsg, null, null);
-											}
+                                                //
+
+
+                                                for (String c : observer.getPublishAudioCandidates()) {
+                                                    candidateData.put("sdpMLineIndex", 0);
+                                                    candidateData.put("sdpMid", "audio");
+                                                    candidateData.put("candidate", c);
+                                                    Log.d("signaling_message:ac", candidateMsg.toString());
+                                                    sendSDPSocket("signaling_message", candidateMsg, null, null);
+                                                }
+
+                                                for (String c : observer.getPublishVideoCandidates()) {
+                                                    candidateData.put("sdpMLineIndex", 1);
+                                                    candidateData.put("sdpMid", "video");
+                                                    candidateData.put("candidate", c);
+                                                    Log.d("signaling_message:vc", candidateMsg.toString());
+                                                    sendSDPSocket("signaling_message", candidateMsg, null, null);
+                                                }
+                                            }
+
 										} catch (JSONException e) {
 											e.printStackTrace();
 										}
@@ -913,6 +915,8 @@ public class LicodeConnector implements VideoConnectorInterface {
 		private long mAnswererSessionId = 0;
 		/** tracks if ice candidates are all collected */
 		boolean mIceReady = false;
+        private ArrayList<String> publishAudioCandidates = new ArrayList<>();
+        private ArrayList<String> publishVideoCandidates = new ArrayList<>();
 
 		/** create an observer for given stream */
 		LicodeSdpObserver(StreamDescription stream, boolean publishing) {
@@ -920,6 +924,14 @@ public class LicodeConnector implements VideoConnectorInterface {
 			mIsPublish = publishing;
 			mSignalChannel = mIsPublish ? "publish" : "subscribe";
 		}
+
+        public ArrayList<String> getPublishAudioCandidates() {
+            return publishAudioCandidates;
+        }
+
+        public ArrayList<String> getPublishVideoCandidates() {
+            return publishVideoCandidates;
+        }
 
 		public boolean isLocal() {
 			return mStream == null ? false : mStream.isLocal();
@@ -1054,13 +1066,15 @@ public class LicodeConnector implements VideoConnectorInterface {
 					if (subscribe) {
 						streamIdLong = Long.parseLong(mStream.getId());
 						mRemoteStream.put(mStream.getId(), mStream);
-						sendOffer(streamIdLong);
+                        observers.put(streamId, LicodeSdpObserver.this);
+                        sendOffer(streamIdLong);
 					}
 
 					if (streamId != null && mIsPublish) {
 						mStream.setId(streamId);
 						mLocalStream.put(streamId, mStream);
-						sendOffer(streamIdLong);
+                        observers.put(streamId, LicodeSdpObserver.this);
+                        sendOffer(streamIdLong);
 					}
 
 
@@ -1189,15 +1203,14 @@ public class LicodeConnector implements VideoConnectorInterface {
 			AudioTrack audioTrack = sFactory.createAudioTrack("ARDAMSa0",
 					sFactory.createAudioSource(audioConstraints));
 			lMS.addTrack(audioTrack);
-			audioTrack.setEnabled(false);
-		}
+            audioTrack.setEnabled(true);
+        }
 
 		StreamDescription stream = new StreamDescription("", false, true, true,
 				false, null, mNick);
 		MediaConstraints pcConstraints = makePcConstraints();
 		MyPcObserver publishObserver = new MyPcObserver(new LicodeSdpObserver(stream,
 				true), stream);
-		observers.put(stream.getId(), publishObserver);
 		PeerConnection pc = sFactory.createPeerConnection(mIceServers,
 				pcConstraints, publishObserver);
 		pc.addStream(lMS, new MediaConstraints());
@@ -1282,7 +1295,6 @@ public class LicodeConnector implements VideoConnectorInterface {
 
 		MyPcObserver subscribeObserver = new MyPcObserver(new LicodeSdpObserver(stream,
 				false), stream);
-		observers.put(stream.getId(), subscribeObserver);
 		PeerConnection pc = sFactory.createPeerConnection(mIceServers,
 				makePcConstraints(), subscribeObserver);
 

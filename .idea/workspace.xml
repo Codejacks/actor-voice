@@ -10,11 +10,7 @@
     <option name="TOOL_WINDOW_REGEXP_FILTER" value="false" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="bbe82436-bdc0-4cf0-8b8c-37a2e1133853" name="Default" comment="handle session id, requset over signaling_message (no response yet)">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" afterPath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/example/voice/FragmentVideoChat.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/voice/FragmentVideoChat.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/example/voice/LicodeConnector.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/voice/LicodeConnector.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/example/voice/StreamDescription.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/voice/StreamDescription.java" />
+    <list default="true" id="bbe82436-bdc0-4cf0-8b8c-37a2e1133853" name="Default" comment="send candidates after sdp answer -&gt; epic win, video publish works">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="actor-voice.iws" />
@@ -39,33 +35,45 @@
       <file leaf-file-name="LicodeConnector.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/voice/LicodeConnector.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.40236688">
-              <caret line="1056" column="35" selection-start-line="1056" selection-start-column="35" selection-end-line="1056" selection-end-column="35" />
+            <state vertical-scroll-proportion="0.5473373">
+              <caret line="588" column="126" selection-start-line="588" selection-start-column="126" selection-end-line="588" selection-end-column="126" />
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="e#3218#3248#0" expanded="true" />
-                <element signature="e#8093#8094#0" expanded="true" />
-                <element signature="e#8153#8154#0" expanded="true" />
-                <element signature="e#8914#8915#0" expanded="true" />
-                <element signature="e#8985#8986#0" expanded="true" />
-                <element signature="e#11294#11375#0" expanded="true" />
-                <element signature="e#11374#11375#0" expanded="true" />
-                <element signature="e#24370#24371#0" expanded="true" />
-                <element signature="e#24429#24430#0" expanded="true" />
-                <element signature="e#24615#24616#0" expanded="true" />
-                <element signature="e#24678#24679#0" expanded="true" />
-                <element signature="e#24736#24737#0" expanded="true" />
-                <element signature="e#24788#24789#0" expanded="true" />
-                <element signature="e#26306#26307#0" expanded="true" />
-                <element signature="e#26355#26356#0" expanded="true" />
-                <element signature="e#26473#26755#0" expanded="true" />
-                <element signature="e#26754#26755#0" expanded="true" />
-                <element signature="e#27199#31552#0" expanded="true" />
-                <element signature="e#31238#31407#0" expanded="true" />
-                <element signature="e#31406#31407#0" expanded="true" />
-                <element signature="e#31551#31552#0" expanded="true" />
-                <element signature="e#35549#35655#0" expanded="true" />
-                <element signature="e#35654#35655#0" expanded="true" />
+                <element signature="e#8195#8196#0" expanded="true" />
+                <element signature="e#8255#8256#0" expanded="true" />
+                <element signature="e#8736#8909#0" expanded="true" />
+                <element signature="e#8908#8909#0" expanded="true" />
+                <element signature="e#8952#8953#0" expanded="true" />
+                <element signature="e#8972#8973#0" expanded="true" />
+                <element signature="e#9016#9017#0" expanded="true" />
+                <element signature="e#9087#9088#0" expanded="true" />
+                <element signature="e#11396#11477#0" expanded="true" />
+                <element signature="e#11476#11477#0" expanded="true" />
+                <element signature="e#14088#21014#0" expanded="true" />
+                <element signature="e#15216#17222#0" expanded="true" />
+                <element signature="e#17221#17222#0" expanded="true" />
+                <element signature="e#17257#17448#0" expanded="true" />
+                <element signature="e#17447#17448#0" expanded="true" />
+                <element signature="e#17484#17645#0" expanded="true" />
+                <element signature="e#17644#17645#0" expanded="true" />
+                <element signature="e#21013#21014#0" expanded="true" />
+                <element signature="e#25638#25639#0" expanded="true" />
+                <element signature="e#25697#25698#0" expanded="true" />
+                <element signature="e#25883#25884#0" expanded="true" />
+                <element signature="e#25946#25947#0" expanded="true" />
+                <element signature="e#26004#26005#0" expanded="true" />
+                <element signature="e#26056#26057#0" expanded="true" />
+                <element signature="e#27574#27575#0" expanded="true" />
+                <element signature="e#27623#27624#0" expanded="true" />
+                <element signature="e#27741#28023#0" expanded="true" />
+                <element signature="e#28022#28023#0" expanded="true" />
+                <element signature="e#28467#31706#0" expanded="true" />
+                <element signature="e#31392#31561#0" expanded="true" />
+                <element signature="e#31560#31561#0" expanded="true" />
+                <element signature="e#31705#31706#0" expanded="true" />
+                <element signature="e#35703#35809#0" expanded="true" />
+                <element signature="e#35808#35809#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -110,10 +118,10 @@
                 <element signature="imports" expanded="true" />
                 <element signature="e#5003#5109#0" expanded="true" />
                 <element signature="e#5108#5109#0" expanded="true" />
-                <element signature="e#11646#11654#0" expanded="true" />
-                <element signature="e#11687#12141#0" expanded="true" />
-                <element signature="e#12140#12141#0" expanded="true" />
-                <element signature="e#12339#12347#0" expanded="true" />
+                <element signature="e#11650#11658#0" expanded="true" />
+                <element signature="e#11691#12145#0" expanded="true" />
+                <element signature="e#12144#12145#0" expanded="true" />
+                <element signature="e#12343#12351#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -2269,7 +2277,19 @@
       <option name="project" value="LOCAL" />
       <updated>1450879647003</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="delete candidates from sdp -&gt; response on sdp">
+      <created>1450982935273</created>
+      <option name="number" value="00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1450982935273</updated>
+    </task>
+    <task id="LOCAL-00004" summary="send candidates after sdp answer -&gt; epic win, video publish works">
+      <created>1450985925795</created>
+      <option name="number" value="00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1450985925795</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -2355,7 +2375,9 @@
     <option name="CHECK_NEW_TODO" value="false" />
     <MESSAGE value="fix-timeout" />
     <MESSAGE value="handle session id, requset over signaling_message (no response yet)" />
-    <option name="LAST_COMMIT_MESSAGE" value="handle session id, requset over signaling_message (no response yet)" />
+    <MESSAGE value="delete candidates from sdp -&gt; response on sdp" />
+    <MESSAGE value="send candidates after sdp answer -&gt; epic win, video publish works" />
+    <option name="LAST_COMMIT_MESSAGE" value="send candidates after sdp answer -&gt; epic win, video publish works" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
   </component>
   <component name="XDebuggerManager">
@@ -2369,36 +2391,18 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/app/src/main/java/com/example/voice/LicodeConnector.java</url>
-          <line>260</line>
-          <properties />
-          <option name="timeStamp" value="126" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/example/voice/LicodeConnector.java</url>
-          <line>255</line>
-          <properties />
-          <option name="timeStamp" value="127" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/example/voice/LicodeConnector.java</url>
-          <line>423</line>
+          <line>425</line>
           <properties />
           <option name="timeStamp" value="128" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/app/src/main/java/com/example/voice/LicodeConnector.java</url>
-          <line>1233</line>
+          <line>1237</line>
           <properties />
           <option name="timeStamp" value="129" />
         </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/example/voice/LicodeConnector.java</url>
-          <line>1075</line>
-          <properties />
-          <option name="timeStamp" value="139" />
-        </line-breakpoint>
       </breakpoints>
-      <option name="time" value="140" />
+      <option name="time" value="148" />
     </breakpoint-manager>
     <watches-manager />
   </component>
@@ -2410,28 +2414,40 @@
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="e#3218#3248#0" expanded="true" />
-            <element signature="e#8093#8094#0" expanded="true" />
-            <element signature="e#8153#8154#0" expanded="true" />
-            <element signature="e#8914#8915#0" expanded="true" />
-            <element signature="e#8985#8986#0" expanded="true" />
-            <element signature="e#11294#11375#0" expanded="true" />
-            <element signature="e#11374#11375#0" expanded="true" />
-            <element signature="e#24370#24371#0" expanded="true" />
-            <element signature="e#24429#24430#0" expanded="true" />
-            <element signature="e#24615#24616#0" expanded="true" />
-            <element signature="e#24678#24679#0" expanded="true" />
-            <element signature="e#24736#24737#0" expanded="true" />
-            <element signature="e#24788#24789#0" expanded="true" />
-            <element signature="e#26306#26307#0" expanded="true" />
-            <element signature="e#26355#26356#0" expanded="true" />
-            <element signature="e#26473#26755#0" expanded="true" />
-            <element signature="e#26754#26755#0" expanded="true" />
-            <element signature="e#27199#31552#0" expanded="true" />
-            <element signature="e#31238#31407#0" expanded="true" />
-            <element signature="e#31406#31407#0" expanded="true" />
-            <element signature="e#31551#31552#0" expanded="true" />
-            <element signature="e#35549#35655#0" expanded="true" />
-            <element signature="e#35654#35655#0" expanded="true" />
+            <element signature="e#8195#8196#0" expanded="true" />
+            <element signature="e#8255#8256#0" expanded="true" />
+            <element signature="e#8736#8909#0" expanded="true" />
+            <element signature="e#8908#8909#0" expanded="true" />
+            <element signature="e#8952#8953#0" expanded="true" />
+            <element signature="e#8972#8973#0" expanded="true" />
+            <element signature="e#9016#9017#0" expanded="true" />
+            <element signature="e#9087#9088#0" expanded="true" />
+            <element signature="e#11396#11477#0" expanded="true" />
+            <element signature="e#11476#11477#0" expanded="true" />
+            <element signature="e#14088#21014#0" expanded="true" />
+            <element signature="e#15216#17222#0" expanded="true" />
+            <element signature="e#17221#17222#0" expanded="true" />
+            <element signature="e#17257#17448#0" expanded="true" />
+            <element signature="e#17447#17448#0" expanded="true" />
+            <element signature="e#17484#17645#0" expanded="true" />
+            <element signature="e#17644#17645#0" expanded="true" />
+            <element signature="e#21013#21014#0" expanded="true" />
+            <element signature="e#25638#25639#0" expanded="true" />
+            <element signature="e#25697#25698#0" expanded="true" />
+            <element signature="e#25883#25884#0" expanded="true" />
+            <element signature="e#25946#25947#0" expanded="true" />
+            <element signature="e#26004#26005#0" expanded="true" />
+            <element signature="e#26056#26057#0" expanded="true" />
+            <element signature="e#27574#27575#0" expanded="true" />
+            <element signature="e#27623#27624#0" expanded="true" />
+            <element signature="e#27741#28023#0" expanded="true" />
+            <element signature="e#28022#28023#0" expanded="true" />
+            <element signature="e#28467#31706#0" expanded="true" />
+            <element signature="e#31392#31561#0" expanded="true" />
+            <element signature="e#31560#31561#0" expanded="true" />
+            <element signature="e#31705#31706#0" expanded="true" />
+            <element signature="e#35703#35809#0" expanded="true" />
+            <element signature="e#35808#35809#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -2444,10 +2460,10 @@
             <element signature="imports" expanded="true" />
             <element signature="e#5003#5109#0" expanded="true" />
             <element signature="e#5108#5109#0" expanded="true" />
-            <element signature="e#11646#11654#0" expanded="true" />
-            <element signature="e#11687#12141#0" expanded="true" />
-            <element signature="e#12140#12141#0" expanded="true" />
-            <element signature="e#12339#12347#0" expanded="true" />
+            <element signature="e#11650#11658#0" expanded="true" />
+            <element signature="e#11691#12145#0" expanded="true" />
+            <element signature="e#12144#12145#0" expanded="true" />
+            <element signature="e#12343#12351#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -2802,10 +2818,10 @@
             <element signature="imports" expanded="true" />
             <element signature="e#5003#5109#0" expanded="true" />
             <element signature="e#5108#5109#0" expanded="true" />
-            <element signature="e#11646#11654#0" expanded="true" />
-            <element signature="e#11687#12141#0" expanded="true" />
-            <element signature="e#12140#12141#0" expanded="true" />
-            <element signature="e#12339#12347#0" expanded="true" />
+            <element signature="e#11650#11658#0" expanded="true" />
+            <element signature="e#11691#12145#0" expanded="true" />
+            <element signature="e#12144#12145#0" expanded="true" />
+            <element signature="e#12343#12351#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -2828,33 +2844,45 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/voice/LicodeConnector.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.40236688">
-          <caret line="1056" column="35" selection-start-line="1056" selection-start-column="35" selection-end-line="1056" selection-end-column="35" />
+        <state vertical-scroll-proportion="0.5473373">
+          <caret line="588" column="126" selection-start-line="588" selection-start-column="126" selection-end-line="588" selection-end-column="126" />
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="e#3218#3248#0" expanded="true" />
-            <element signature="e#8093#8094#0" expanded="true" />
-            <element signature="e#8153#8154#0" expanded="true" />
-            <element signature="e#8914#8915#0" expanded="true" />
-            <element signature="e#8985#8986#0" expanded="true" />
-            <element signature="e#11294#11375#0" expanded="true" />
-            <element signature="e#11374#11375#0" expanded="true" />
-            <element signature="e#24370#24371#0" expanded="true" />
-            <element signature="e#24429#24430#0" expanded="true" />
-            <element signature="e#24615#24616#0" expanded="true" />
-            <element signature="e#24678#24679#0" expanded="true" />
-            <element signature="e#24736#24737#0" expanded="true" />
-            <element signature="e#24788#24789#0" expanded="true" />
-            <element signature="e#26306#26307#0" expanded="true" />
-            <element signature="e#26355#26356#0" expanded="true" />
-            <element signature="e#26473#26755#0" expanded="true" />
-            <element signature="e#26754#26755#0" expanded="true" />
-            <element signature="e#27199#31552#0" expanded="true" />
-            <element signature="e#31238#31407#0" expanded="true" />
-            <element signature="e#31406#31407#0" expanded="true" />
-            <element signature="e#31551#31552#0" expanded="true" />
-            <element signature="e#35549#35655#0" expanded="true" />
-            <element signature="e#35654#35655#0" expanded="true" />
+            <element signature="e#8195#8196#0" expanded="true" />
+            <element signature="e#8255#8256#0" expanded="true" />
+            <element signature="e#8736#8909#0" expanded="true" />
+            <element signature="e#8908#8909#0" expanded="true" />
+            <element signature="e#8952#8953#0" expanded="true" />
+            <element signature="e#8972#8973#0" expanded="true" />
+            <element signature="e#9016#9017#0" expanded="true" />
+            <element signature="e#9087#9088#0" expanded="true" />
+            <element signature="e#11396#11477#0" expanded="true" />
+            <element signature="e#11476#11477#0" expanded="true" />
+            <element signature="e#14088#21014#0" expanded="true" />
+            <element signature="e#15216#17222#0" expanded="true" />
+            <element signature="e#17221#17222#0" expanded="true" />
+            <element signature="e#17257#17448#0" expanded="true" />
+            <element signature="e#17447#17448#0" expanded="true" />
+            <element signature="e#17484#17645#0" expanded="true" />
+            <element signature="e#17644#17645#0" expanded="true" />
+            <element signature="e#21013#21014#0" expanded="true" />
+            <element signature="e#25638#25639#0" expanded="true" />
+            <element signature="e#25697#25698#0" expanded="true" />
+            <element signature="e#25883#25884#0" expanded="true" />
+            <element signature="e#25946#25947#0" expanded="true" />
+            <element signature="e#26004#26005#0" expanded="true" />
+            <element signature="e#26056#26057#0" expanded="true" />
+            <element signature="e#27574#27575#0" expanded="true" />
+            <element signature="e#27623#27624#0" expanded="true" />
+            <element signature="e#27741#28023#0" expanded="true" />
+            <element signature="e#28022#28023#0" expanded="true" />
+            <element signature="e#28467#31706#0" expanded="true" />
+            <element signature="e#31392#31561#0" expanded="true" />
+            <element signature="e#31560#31561#0" expanded="true" />
+            <element signature="e#31705#31706#0" expanded="true" />
+            <element signature="e#35703#35809#0" expanded="true" />
+            <element signature="e#35808#35809#0" expanded="true" />
           </folding>
         </state>
       </provider>

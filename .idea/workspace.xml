@@ -2029,7 +2029,13 @@
       <option name="project" value="LOCAL" />
       <updated>1451003997037</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="gitignore idea files&#10;">
+      <created>1451004041730</created>
+      <option name="number" value="00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1451004041730</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="ToolWindowManager">

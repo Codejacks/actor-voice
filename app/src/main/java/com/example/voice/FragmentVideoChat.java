@@ -110,10 +110,10 @@ public class FragmentVideoChat extends Fragment {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		Logging.enableTracing(
-				"logcat:",
-				EnumSet.of(Logging.TraceLevel.TRACE_ALL),
-				Logging.Severity.LS_SENSITIVE);
+//		Logging.enableTracing(
+//				"logcat:",
+//				EnumSet.of(Logging.TraceLevel.TRACE_ALL),
+//				Logging.Severity.LS_SENSITIVE);
 	}
 
 	/** helper function - called to prepare the video chat connector instance */

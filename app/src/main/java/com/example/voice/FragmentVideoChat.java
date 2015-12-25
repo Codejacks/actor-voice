@@ -2,16 +2,13 @@ package com.example.voice;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.EnumSet;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -19,14 +16,10 @@ import android.app.Fragment;
 import android.content.res.Configuration;
 import android.graphics.Point;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -37,7 +30,6 @@ import android.widget.Toast;
 import com.example.voice.StreamDescriptionInterface.StreamState;
 
 import org.json.JSONObject;
-import org.webrtc.Logging;
 
 /**
  * simple fragment to display two rows of video streams

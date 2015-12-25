@@ -1,14 +1,8 @@
 package com.example.voice;
 
-import java.io.BufferedInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -23,7 +17,6 @@ import org.json.JSONObject;
 import org.webrtc.AudioTrack;
 import org.webrtc.DataChannel;
 import org.webrtc.IceCandidate;
-import org.webrtc.Logging;
 import org.webrtc.MediaConstraints;
 import org.webrtc.MediaStream;
 import org.webrtc.PeerConnection;
@@ -47,7 +40,6 @@ import android.util.Base64;
 import android.util.Log;
 
 import com.koushikdutta.async.http.AsyncHttpClient;
-import com.koushikdutta.async.http.AsyncHttpResponse;
 import com.koushikdutta.async.http.socketio.Acknowledge;
 import com.koushikdutta.async.http.socketio.ConnectCallback;
 import com.koushikdutta.async.http.socketio.EventCallback;

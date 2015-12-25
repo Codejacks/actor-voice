@@ -25,7 +25,7 @@
 
         android:theme="@style/AppTheme" >
         <activity
-            android:name="com.example.voice.MainActivity"
+            android:name=".MainActivity"
             android:label="@string/app_name"
             android:configChanges="screenLayout|screenSize|orientation"
              >

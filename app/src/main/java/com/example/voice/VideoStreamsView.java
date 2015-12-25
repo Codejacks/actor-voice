@@ -46,8 +46,6 @@ import android.opengl.GLSurfaceView;
 import android.os.Build;
 import android.util.Log;
 
-import com.example.voice.FramePool;
-
 /**
  * A GLSurfaceView{,.Renderer} that efficiently renders YUV frames from local &
  * remote VideoTracks using the GPU for CSC. Clients will want to call the

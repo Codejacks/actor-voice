@@ -1,4 +1,4 @@
-package com.example.voice;
+package im.actor.calls;
 
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;

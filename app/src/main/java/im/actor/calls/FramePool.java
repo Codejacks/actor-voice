@@ -1,4 +1,4 @@
-package com.example.voice;
+package im.actor.calls;
 /*
  * libjingle
  * Copyright 2013, Google Inc.

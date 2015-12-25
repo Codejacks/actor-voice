@@ -3,10 +3,10 @@
     android:id="@+id/activity_base_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.voice.MainActivity"
+    tools:context="im.actor.calls.MainActivity"
      >
 	<fragment
-	    android:name="com.example.voice.FragmentVideoChat"
+        android:name="im.actor.calls.FragmentVideoChat"
 	    android:id="@+id/fragment_videochat"
 	    android:layout_width="match_parent"
 	    android:layout_height="match_parent"

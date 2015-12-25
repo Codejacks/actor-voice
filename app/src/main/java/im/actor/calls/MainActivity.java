@@ -1,7 +1,9 @@
-package com.example.voice;
+package im.actor.calls;
 
 import android.app.Activity;
 import android.os.Bundle;
+
+import com.example.calls.R;
 
 public class MainActivity extends Activity {
 

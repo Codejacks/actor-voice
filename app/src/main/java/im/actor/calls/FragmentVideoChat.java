@@ -1,4 +1,4 @@
-package com.example.voice;
+package im.actor.calls;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -27,7 +27,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.example.voice.StreamDescriptionInterface.StreamState;
+import com.example.calls.R;
 
 import org.json.JSONObject;
 
@@ -264,7 +264,7 @@ public class FragmentVideoChat extends Fragment {
 					for (String key : streams.keySet()) {
 						StreamDescriptionInterface stream = streams.get(key);
 						if (stream != null
-								&& stream.getState() != StreamState.CLOSING) {
+								&& stream.getState() != StreamDescriptionInterface.StreamState.CLOSING) {
 							mConnector.subscribe(stream);
 						}
 					}

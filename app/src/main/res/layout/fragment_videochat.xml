@@ -10,11 +10,11 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <com.example.voice.VideoGridLayout
+        <im.actor.calls.VideoGridLayout
             android:id="@+id/videochat_grid"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            tools:targetApi="11"></com.example.voice.VideoGridLayout>
+            tools:targetApi="11"></im.actor.calls.VideoGridLayout>
 
         <Button
             android:id="@+id/start"

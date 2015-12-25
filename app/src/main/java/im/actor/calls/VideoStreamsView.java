@@ -1,4 +1,4 @@
-package com.example.voice;
+package im.actor.calls;
 
 /*
  * libjingle
